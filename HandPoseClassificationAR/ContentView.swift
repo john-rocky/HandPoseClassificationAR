@@ -10,28 +10,28 @@ import RealityKit
 
 struct ContentView : View {
     var body: some View {
-        return ARViewContainer().edgesIgnoringSafeArea(.all)
+        return ARViewControllerContainer().edgesIgnoringSafeArea(.all)
     }
 }
 
-struct ARViewContainer: UIViewRepresentable {
+struct ARViewControllerContainer: UIViewControllerRepresentable {
+        
+    func makeUIViewController(context: UIViewControllerRepresentableContext<ARViewControllerContainer>) -> ARViewController {
+        let viewController = ARViewController()
+        return viewController
+    }
     
-    func makeUIView(context: Context) -> ARView {
-        
-        let arView = ARView(frame: .zero)
-        
-        // Load the "Box" scene from the "Experience" Reality File
-        let boxAnchor = try! Experience.loadBox()
-        
-        // Add the box anchor to the scene
-        arView.scene.anchors.append(boxAnchor)
-        
-        return arView
+    func updateUIViewController(_ uiViewController: ARViewController, context: UIViewControllerRepresentableContext<ARViewControllerContainer>) {
         
     }
     
-    func updateUIView(_ uiView: ARView, context: Context) {}
+    func makeCoordinator() -> ARViewControllerContainer.Coordinator {
+        return Coordinator()
+    }
     
+    class Coordinator: NSObject {
+        
+    }
 }
 
 #if DEBUG
