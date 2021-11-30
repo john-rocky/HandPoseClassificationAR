@@ -73,10 +73,12 @@ class ARViewController: UIViewController,ARSessionDelegate {
             guard let confidence = prediction.labelProbabilities[label] else { return }
             print("label:\(prediction.label)\nconfidence:\(confidence)")
             if confidence > 0.9 {
-                switch label {
-                case "fingerHeart":displayFingerHeartEffect()
-                case "peace":displayPeaceEffect()
-                default : break
+                DispatchQueue.main.async { [self] in
+                    switch label {
+                    case "fingerHeart":displayFingerHeartEffect()
+                    case "peace":displayPeaceEffect()
+                    default : break
+                    }
                 }
             }
         } catch {
@@ -105,9 +107,30 @@ class ARViewController: UIViewController,ARSessionDelegate {
     }
     
     func displayPeaceEffect(){
+        guard !isEffectAppearing else { return }
+        isEffectAppearing = true
+        guard let handPoseObservation = currentHandPoseObservation,let indexFingerPosition = getHandPosition(handPoseObservation: handPoseObservation) else {return}
+        
         starNodes.forEach { star in
-            star.physicsBody = SCNPhysicsBody(type: .dynamic, shape: SCNPhysicsShape(geometry: star.geometry ?? SCNBox(width: 0.01, height: 0.01, length: 0.01, chamferRadius: 0), options: [:]))
+            star.opacity = 1
+//            star.physicsBody = SCNPhysicsBody(type: .dynamic, shape: SCNPhysicsShape(geometry: star.geometry ?? SCNBox(width: 0.01, height: 0.01, length: 0.01, chamferRadius: 0), options: [:]))
+            star.position = indexFingerPosition
+            let randomX = Float.random(in: -0.05...0.05)
+            let randomY = Float.random(in: 0...0.05)
+            let randomZ = Float.random(in: -0.05...0.05)
+            let fadeIn = SCNAction.fadeIn(duration: 0.1)
+            let move = SCNAction.move(by: SCNVector3(x: randomX, y: randomY, z: randomZ), duration: 0.5)
+            move.timingMode = .easeInEaseOut
+            let fadeOut = SCNAction.fadeOut(duration: 1)
+            let switchEffectAppearing = SCNAction.run { node in
+                self.isEffectAppearing = false
+            }
 
+            star.runAction(.sequence([fadeIn, move, fadeOut, switchEffectAppearing]))
+//            star.physicsBody?.applyForce(SCNVector3(x: randomX, y: randomY, z: randomZ), asImpulse: true)
+        }
+        Timer.scheduledTimer(withTimeInterval: 2, repeats: false) { timer in
+            self.isEffectAppearing = false
         }
     }
     
@@ -135,9 +158,11 @@ class ARViewController: UIViewController,ARSessionDelegate {
         heart.opacity = 0
         
         for _ in 0...7 {
-            guard let star = scene.rootNode.childNode(withName: "starBox", recursively: true)?.clone() else {return}
-            star.scale = SCNVector3(x: 0.01, y: 0.01, z: 0.01)
+            guard let star = scene.rootNode.childNode(withName: "star", recursively: true)?.clone() else {return}
+            star.scale = SCNVector3(x: 0.002, y: 0.002, z: 0.002)
             starNodes.append(star)
+            arScnView.scene.rootNode.addChildNode(star)
+            star.opacity = 0
         }
     }
 }
