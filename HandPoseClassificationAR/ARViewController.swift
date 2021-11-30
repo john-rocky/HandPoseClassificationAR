@@ -21,6 +21,9 @@ class ARViewController: UIViewController,ARSessionDelegate {
     var viewWidth:Int = 0
     var viewHeight:Int = 0
     var currentHandPoseObservation: VNHumanHandPoseObservation?
+    var heartNode: SCNNode!
+    var starNodes: [SCNNode] = []
+    var isEffectAppearing = false
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -32,6 +35,8 @@ class ARViewController: UIViewController,ARSessionDelegate {
         let config = ARFaceTrackingConfiguration()
         arScnView.session.delegate = self
         arScnView.session.run(config, options: [.removeExistingAnchors])
+        prepareEffects()
+       
     }
     
     func session(_ session: ARSession, didUpdate frame: ARFrame) {
@@ -80,21 +85,34 @@ class ARViewController: UIViewController,ARSessionDelegate {
     }
     
     func displayFingerHeartEffect(){
+        guard !isEffectAppearing else { return }
+        isEffectAppearing = true
         guard let handPoseObservation = currentHandPoseObservation,let indexFingerPosition = getHandPosition(handPoseObservation: handPoseObservation) else {return}
-//        let heatNode = SCNNode(geometry: SCNBox(width: 0.01, height: 0.01, length: 0.01, chamferRadius: 0))
-
-        let heatNode = SCNNode(geometry: SCNText(string: "❤︎", extrusionDepth: 2))
-        
-        arScnView.scene.rootNode.addChildNode(heatNode)
-        heatNode.position = indexFingerPosition
+        heartNode.position = indexFingerPosition
+        let fadeIn = SCNAction.fadeIn(duration: 0.2)
+        let up = SCNAction.move(by: SCNVector3(x: 0, y: 0.1, z: 0), duration: 0.1)
+        let shakeHalfRight = SCNAction.rotate(by: -0.3, around: SCNVector3(x: 0, y: 0, z: 1), duration: 0.025)
+        let shakeLeft = SCNAction.rotate(by: 0.6, around: SCNVector3(x: 0, y: 0, z: 1), duration: 0.05)
+        let shakeRight = SCNAction.rotate(by: -0.6, around: SCNVector3(x: 0, y: 0, z: 1), duration: 0.05)
+        let shakeHalfLeft = SCNAction.rotate(by: 0.3, around: SCNVector3(x: 0, y: 0, z: 1), duration: 0.025)
+        let shake = SCNAction.sequence([shakeLeft,shakeRight])
+        let fadeOut = SCNAction.fadeOut(duration: 1)
+        let shakeRepeat = SCNAction.sequence([shakeHalfRight,shake,shake,shake,shake,shakeHalfLeft])
+        let switchEffectAppearing = SCNAction.run { node in
+            self.isEffectAppearing = false
+        }
+        heartNode.runAction(.sequence([fadeIn,up,shakeRepeat,fadeOut,switchEffectAppearing]))
     }
     
     func displayPeaceEffect(){
-        
+        starNodes.forEach { star in
+            star.physicsBody = SCNPhysicsBody(type: .dynamic, shape: SCNPhysicsShape(geometry: star.geometry ?? SCNBox(width: 0.01, height: 0.01, length: 0.01, chamferRadius: 0), options: [:]))
+
+        }
     }
     
     func getHandPosition(handPoseObservation: VNHumanHandPoseObservation) -> SCNVector3? {
-        guard let indexFingerTip = try? handPoseObservation.recognizedPoints(.all)[.indexTip],
+        guard let indexFingerTip = try? handPoseObservation.recognizedPoints(.all)[.indexPIP],
               indexFingerTip.confidence > 0.3 else {return nil}
         let deNormalizedIndexPoint = VNImagePointForNormalizedPoint(CGPoint(x: indexFingerTip.location.x, y:1-indexFingerTip.location.y), viewWidth,  viewHeight)
         let infrontOfCamera = SCNVector3(x: 0, y: 0, z: -0.2)
@@ -106,5 +124,20 @@ class ARViewController: UIViewController,ARSessionDelegate {
         let finalPosition = arScnView.unprojectPoint(screenPos)
         print(finalPosition)
         return finalPosition
+    }
+    
+    func prepareEffects() {
+        let scene = SCNScene(named: "art.scnassets/Effects.scn")!
+        guard let heart = scene.rootNode.childNode(withName: "Love reference", recursively: true)?.clone() else {return}
+        heart.scale = SCNVector3(x: 0.0005, y: 0.0005, z: 0.0005)
+        heartNode = heart
+        arScnView.scene.rootNode.addChildNode(heart)
+        heart.opacity = 0
+        
+        for _ in 0...7 {
+            guard let star = scene.rootNode.childNode(withName: "starBox", recursively: true)?.clone() else {return}
+            star.scale = SCNVector3(x: 0.01, y: 0.01, z: 0.01)
+            starNodes.append(star)
+        }
     }
 }

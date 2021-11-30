@@ -17,7 +17,7 @@
 		7369F169275178AD00EBF659 /* ARViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7369F168275178AD00EBF659 /* ARViewController.swift */; };
 		7369F16B2751961100EBF659 /* MyHandPoseClassifier 1.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 7369F16A2751961100EBF659 /* MyHandPoseClassifier 1.mlmodel */; };
 		7369F16D2751A15900EBF659 /* HandPoseClassifier.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 7369F16C2751A15900EBF659 /* HandPoseClassifier.mlmodel */; };
-		7369F16F2753381800EBF659 /* SceneKit Scene.scn in Resources */ = {isa = PBXBuildFile; fileRef = 7369F16E2753381800EBF659 /* SceneKit Scene.scn */; };
+		7369F17527545D9D00EBF659 /* art.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 7369F17427545D9D00EBF659 /* art.scnassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -51,7 +51,7 @@
 		7369F168275178AD00EBF659 /* ARViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARViewController.swift; sourceTree = "<group>"; };
 		7369F16A2751961100EBF659 /* MyHandPoseClassifier 1.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = "MyHandPoseClassifier 1.mlmodel"; sourceTree = "<group>"; };
 		7369F16C2751A15900EBF659 /* HandPoseClassifier.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = HandPoseClassifier.mlmodel; sourceTree = "<group>"; };
-		7369F16E2753381800EBF659 /* SceneKit Scene.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = "SceneKit Scene.scn"; sourceTree = "<group>"; };
+		7369F17427545D9D00EBF659 /* art.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = art.scnassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -82,7 +82,6 @@
 		7369F130275176F400EBF659 = {
 			isa = PBXGroup;
 			children = (
-				7369F16E2753381800EBF659 /* SceneKit Scene.scn */,
 				7369F13B275176F400EBF659 /* HandPoseClassificationAR */,
 				7369F14E275176FD00EBF659 /* HandPoseClassificationARTests */,
 				7369F158275176FE00EBF659 /* HandPoseClassificationARUITests */,
@@ -108,6 +107,7 @@
 				7369F168275178AD00EBF659 /* ARViewController.swift */,
 				7369F16C2751A15900EBF659 /* HandPoseClassifier.mlmodel */,
 				7369F16A2751961100EBF659 /* MyHandPoseClassifier 1.mlmodel */,
+				7369F17427545D9D00EBF659 /* art.scnassets */,
 				7369F142275176FC00EBF659 /* Assets.xcassets */,
 				7369F144275176FC00EBF659 /* Preview Content */,
 			);
@@ -244,8 +244,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				7369F146275176FC00EBF659 /* Preview Assets.xcassets in Resources */,
+				7369F17527545D9D00EBF659 /* art.scnassets in Resources */,
 				7369F143275176FC00EBF659 /* Assets.xcassets in Resources */,
-				7369F16F2753381800EBF659 /* SceneKit Scene.scn in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
