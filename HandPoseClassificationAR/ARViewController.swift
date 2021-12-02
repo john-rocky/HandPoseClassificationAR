@@ -3,7 +3,6 @@
 //  HandPoseClassificationAR
 //
 //  Created by 間嶋大輔 on 2021/11/27.
-//
 
 import UIKit
 import CoreML
